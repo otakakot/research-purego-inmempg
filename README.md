@@ -17,6 +17,11 @@
 | [ライブラリ詳細リファレンス](docs/libraries.md) | 全11プロジェクトのライセンス・依存関係・バージョン情報 |
 | [PostgreSQL機能一覧](docs/pg-features.md) | 実装すべき640+の機能を優先度付きで網羅的に整理 |
 | [互換性テスト手法](docs/compatibility-testing.md) | PG回帰テスト、SQLLogicTest、差分テスト等のテスト戦略 |
+| **実装詳細調査** | |
+| [psql-wire 詳細分析](docs/deep-dive-psql-wire.md) | ハンドラAPI、型システム、Extended Query Protocol、認証、並列パイプライニング |
+| [pgparser 詳細分析](docs/deep-dive-pgparser.md) | 210 ASTノード型、パーサーAPI、式の表現、ゼロ依存アーキテクチャ |
+| [クエリ実行エンジン詳細](docs/deep-dive-engine.md) | go-mysql-server の5層アーキテクチャ、主要インターフェース、最適化ルール |
+| [インプロセス接続パターン](docs/deep-dive-connection.md) | net.Pipe() + pgx DialFunc、カスタムListener、統合パターン |
 
 ---
 
