@@ -1,4 +1,4 @@
-# 推奨アーキテクチャと結論
+# 推奨アーキテクチャ
 
 [← README に戻る](../README.md)
 
@@ -61,45 +61,6 @@ psql-wire + pgplex/pgparser + 独自実行エンジン
 | Phase 2 | JOIN, サブクエリ, 集約関数 |
 | Phase 3 | トランザクション, インデックス |
 | Phase 4 | PostgreSQL組み込み関数, 型キャスト |
-
----
-
-## 結論
-
-### 現状の課題
-
-**Go製のインメモリ・インプロセスPostgreSQLを「完全にPure Goで」実現するのは、現時点では非常に困難**である。
-
-その理由:
-- PostgreSQLの互換性は、パーサーだけでなく**実行エンジン**の膨大な実装を必要とする
-  - 型システム（数十種類の組み込み型）
-  - 関数（数百種類の組み込み関数）
-  - 演算子（型ごとの演算子オーバーロード）
-  - 暗黙の型キャスト
-  - トランザクション分離レベル（Read Committed, Repeatable Read, Serializable）
-  - 制約（CHECK, UNIQUE, FOREIGN KEY, EXCLUSION）
-- 既存のPure Go SQLエンジン（ramsql等）はPostgreSQL互換性が低い
-- DoltgreSQL は最も近い存在だが、ライブラリ化が想定されていない
-
-### 実用的な選択肢
-
-**用途を限定する**ことで実用的なソリューションは構築可能:
-
-| 用途 | 推奨アプローチ | 理由 |
-|------|-------------|------|
-| テスト（高互換性） | DoltgreSQL インプロセス起動 | 91%+ PG互換性、Pure Go |
-| テスト（基本SQL） | ramsql 利用 | 完全インプロセス・インメモリ、簡単 |
-| テスト（完全互換） | embedded-postgres | 本物のPostgreSQL、確実 |
-| プロダクション | 素直にPostgreSQLを使う | - |
-
-### 注目すべき新技術
-
-以下の組み合わせが、Pure Go フルスタックアプローチの基盤として最も有望:
-
-- **[pgplex/pgparser](https://github.com/pgplex/pgparser)**: Pure Go、PostgreSQL 17.7互換パーサー（99.6%回帰テスト通過）
-- **[psql-wire](https://github.com/jeroenrinzema/psql-wire)**: Pure Go、PostgreSQLワイヤープロトコル実装
-
-この2つが揃ったことで、残る課題は**クエリ実行エンジンの実装**に集約される。コミュニティの成長やAIによるコード生成技術の進歩により、将来的に実現可能性は高まっていくと考えられる。
 
 ---
 
