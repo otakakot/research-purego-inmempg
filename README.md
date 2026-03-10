@@ -16,6 +16,7 @@
 | [推奨アーキテクチャ](docs/recommendation.md) | 短期・中長期の推奨事項、関連リンク集 |
 | [ライブラリ詳細リファレンス](docs/libraries.md) | 全11プロジェクトのライセンス・依存関係・バージョン情報 |
 | [PostgreSQL機能一覧](docs/pg-features.md) | 実装すべき640+の機能を優先度付きで網羅的に整理 |
+| [実装TODOリスト](docs/todo.md) | 全536機能のチェックリスト（Phase 1/2/3） |
 | [互換性テスト手法](docs/compatibility-testing.md) | PG回帰テスト、SQLLogicTest、差分テスト等のテスト戦略 |
 | **実装詳細調査** | |
 | [psql-wire 詳細分析](docs/deep-dive-psql-wire.md) | ハンドラAPI、型システム、Extended Query Protocol、認証、並列パイプライニング |
