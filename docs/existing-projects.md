@@ -111,6 +111,8 @@ Dolt ストレージエンジン (Prolly Tree)
 | 未実行 | 91,270 |
 | **正確性** | **91.17%** |
 
+> **📝 注記（PostgreSQL 19devel）**: PostgreSQL 19devel には新しい SQL 機能が追加されている可能性があり、互換性率はさらに低下する場合がある。最新の PostgreSQL 仕様との差分については、https://github.com/postgres/postgres からソースコードを参照のこと。
+
 ### メリット
 
 - Pure Go実装
@@ -295,10 +297,24 @@ func handler(ctx context.Context, query string) (wire.PreparedStatements, error)
 - セッション属性のサポート
 - Shopify等で採用実績あり
 
+> **📝 注記（PostgreSQL 19devel）**: PostgreSQL 19devel ではプロトコルバージョン 3.0〜3.2 をサポートしている（`src/include/libpq/pqcomm.h`）。psql-wire が対応するプロトコルバージョンとの差異に注意が必要。
+
 ### デメリット
 
 - SQLパーサー・実行エンジンは含まない（ワイヤープロトコルのみ）
 - クエリの解釈と実行は利用者側で実装する必要がある
+
+---
+
+## 補足: PostgreSQL ソースコード参照について
+
+本調査で参照している各プロジェクトの互換性を検証する際、PostgreSQL 本体のソースコードが有用である。https://github.com/postgres/postgres から PostgreSQL 19devel のソースコードを参照可能。
+
+関連する注記:
+
+- **pgplex/pgparser** は PostgreSQL 17.7 の `gram.y` をベースにしているが、19devel の `gram.y` は 20,059行に達しており、文法定義に差分がある可能性がある。pgparser を 19devel 対応にするにはアップデートが必要になる場合がある。
+- **DoltgreSQL** の SQL 互換性テスト（91.17%）は現行バージョンに対するものであり、PostgreSQL 19devel の新機能はカバーされていない可能性がある。
+- **psql-wire** のプロトコル実装は、PostgreSQL 19devel がサポートするプロトコルバージョン 3.0〜3.2（`src/include/libpq/pqcomm.h`）との整合性を確認する必要がある。
 
 ---
 

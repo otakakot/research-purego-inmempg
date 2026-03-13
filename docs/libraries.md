@@ -82,6 +82,8 @@
 - 依存関係が非常に大きく、バイナリサイズに影響する
 - Doltのリモート（S3, GCS, Azure等）機能のためのクラウドSDK依存がある
 
+> **📝 注記（PostgreSQL 19devel）**: PostgreSQL 19devel には新しい SQL 機能・構文が追加されている可能性があり、DoltgreSQL の互換性テスト（91.17%）はこれらをカバーしていない場合がある。最新の PostgreSQL 仕様については https://github.com/postgres/postgres を参照。
+
 ---
 
 ### 3. dolthub/go-mysql-server
@@ -212,6 +214,8 @@ tenantID, ok := wire.GetAttribute(ctx, "tenant_id")
 - Extended Query Protocol (Parse/Bind/Describe/Execute)
 - セッション属性管理
 
+> **📝 注記（PostgreSQL 19devel）**: PostgreSQL 19devel ではプロトコルバージョン 3.0〜3.2 をサポートしている（`src/include/libpq/pqcomm.h`）。psql-wire が実装するプロトコルバージョンとの整合性を確認する必要がある。
+
 ---
 
 ### 7. pgplex/pgparser
@@ -250,6 +254,8 @@ stmts, err := parser.Parse("SELECT * FROM users WHERE id > 100")
 - スレッドセーフ
 - PostgreSQL の AST と完全互換のノード構造体
 - 非常に新しいプロジェクト（2026年2月公開）
+
+> **📝 注記（PostgreSQL 19devel）**: pgparser は PostgreSQL 17.7 の `gram.y` をベースとしている。PostgreSQL 19devel の `gram.y` は 20,059行に達しており、新しい構文や文法規則が追加されている可能性がある。19devel 対応にはアップデートが必要になる場合がある。
 
 ---
 

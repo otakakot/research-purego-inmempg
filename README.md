@@ -23,6 +23,16 @@
 | [pgparser 詳細分析](docs/deep-dive-pgparser.md) | 210 ASTノード型、パーサーAPI、式の表現、ゼロ依存アーキテクチャ |
 | [クエリ実行エンジン詳細](docs/deep-dive-engine.md) | go-mysql-server の5層アーキテクチャ、主要インターフェース、最適化ルール |
 | [インプロセス接続パターン](docs/deep-dive-connection.md) | net.Pipe() + pgx DialFunc、カスタムListener、統合パターン |
+| **PostgreSQL ソースコード調査** | |
+| [PostgreSQL ソースコード概要](docs/pg-source-overview.md) | PostgreSQL 19devel のソースコード構成と主要コンポーネント |
+| [PostgreSQL アーキテクチャ詳解](docs/pg-architecture.md) | プロセスモデル、メモリ管理、クエリ処理パイプライン |
+| [インメモリ実装への示唆](docs/pg-source-for-inmem.md) | PostgreSQL ソースコードから得られるインメモリ実装のヒント |
+
+---
+
+## PostgreSQL ソースコード調査
+
+https://github.com/postgres/postgres から PostgreSQL 19devel のソースコードを参照可能。ソースコード調査により、ワイヤープロトコル（バージョン 3.0〜3.2）、SQL パーサー（`gram.y` 20,059行）、メモリ管理、クエリ処理パイプライン等の内部実装を分析し、インメモリ PostgreSQL 互換エンジンの設計に活用している。
 
 ---
 

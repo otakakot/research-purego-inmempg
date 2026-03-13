@@ -6,6 +6,8 @@
 
 Go製インメモリPostgreSQLの互換性をどのように検証するか、既存のテストフレームワーク・手法・ツールを調査し整理する。
 
+> **注記**: PostgreSQL のソースコードは https://github.com/postgres/postgres から参照可能です。PostgreSQL 19devel では PG 17.7 に比べ回帰テストが追加・更新されている可能性があるため、最新のテストスイートを基準にすることを推奨します。
+
 ---
 
 ## 目次
@@ -114,12 +116,73 @@ PostgreSQL回帰テストのSQLファイルを直接利用することが可能:
 
 | テストスイート | 場所 | 内容 |
 |-------------|------|------|
-| コア回帰テスト | `src/test/regress/` | 基本的なSQL機能 |
-| 分離レベルテスト | `src/test/isolation/` | 同時実行・ロック挙動 |
-| リカバリテスト | `src/test/recovery/` | クラッシュリカバリ |
-| 認証テスト | `src/test/authentication/` | 認証方式 |
-| PL/pgSQLテスト | `src/pl/plpgsql/src/sql/` | 手続き言語 |
-| contribテスト | `contrib/*/sql/` | 拡張機能 |
+| コア回帰テスト | `src/test/regress/` | 基本的なSQL機能（213テスト、約45,000 SQL文） |
+| 分離レベルテスト | `src/test/isolation/` | 同時実行・ロック・トランザクション分離挙動 |
+| リカバリテスト | `src/test/recovery/` | クラッシュリカバリ・WALリプレイ |
+| 認証テスト | `src/test/authentication/` | 各種認証方式（password, scram, cert 等） |
+| サブスクリプションテスト | `src/test/subscription/` | 論理レプリケーション |
+| モジュールテスト | `src/test/modules/` | モジュール固有のテスト |
+| ロケールテスト | `src/test/locale/` | ロケール処理 |
+| マルチバイトテスト | `src/test/mb/` | マルチバイト文字（UTF-8、EUC-JP 等） |
+| SSL テスト | `src/test/ssl/` | SSL/TLS 接続 |
+| Kerberos テスト | `src/test/kerberos/` | Kerberos 認証 |
+| LDAP テスト | `src/test/ldap/` | LDAP 認証 |
+| PL/pgSQL テスト | `src/pl/plpgsql/src/sql/` | 手続き言語 |
+| contrib テスト | `contrib/*/sql/` | 拡張機能 |
+
+### `src/test/` ディレクトリ構造の詳細（PostgreSQL 19devel）
+
+PostgreSQL ソースツリーの `src/test/` 以下には、機能別に分離された複数のテストスイートが存在する:
+
+```
+src/test/
+├── regress/           # コア SQL 回帰テスト（213テスト、~45,000 SQL文）
+│   ├── sql/           #   テスト用 SQL ファイル
+│   └── expected/      #   期待出力ファイル（.out）
+├── isolation/         # 分離レベル・同時実行テスト
+├── authentication/    # 認証方式テスト
+├── recovery/          # クラッシュリカバリテスト
+├── subscription/      # 論理レプリケーションテスト
+├── modules/           # モジュール固有テスト
+├── locale/            # ロケール処理テスト
+├── mb/                # マルチバイト文字テスト
+├── ssl/               # SSL/TLS テスト
+├── kerberos/          # Kerberos 認証テスト
+└── ldap/              # LDAP 認証テスト
+```
+
+### 回帰テストの実行方法
+
+PostgreSQL をソースからビルドしてテストを実行する方法:
+
+```bash
+# PostgreSQL ソースの取得（https://github.com/postgres/postgres を参照）
+cd postgres
+
+# Autoconf ベースのビルド・テスト
+./configure
+make -j$(nproc)
+make check                # 一時インストールでの回帰テスト
+make installcheck         # 既存インストールに対するテスト
+make check-world          # 全テストスイート（contrib含む）
+
+# Meson ベースのビルド・テスト（PG 16 以降推奨）
+meson setup build
+cd build
+meson compile
+meson test                # 全テスト実行
+meson test --suite regress  # 回帰テストのみ
+```
+
+### インメモリエンジンへのテスト活用
+
+回帰テストの SQL ファイル（`src/test/regress/sql/`）と期待出力（`src/test/regress/expected/`）は、インメモリエンジンのテストに直接活用できる:
+
+1. `sql/` 内の各テストファイルを自作エンジンに対して実行
+2. 出力を `expected/` の `.out` ファイルと比較
+3. 差分が発生した箇所を未実装機能として特定
+
+> **PG 19devel に関する注意**: PostgreSQL 19devel では PG 17.7 に比べて新規テストが追加されている場合がある。最新のソースツリーを使用し、テストカバレッジの変更点を確認すること。テストスケジュールは `src/test/regress/parallel_schedule` で管理されている。
 
 ---
 

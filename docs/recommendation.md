@@ -10,6 +10,8 @@
 
 現時点で最も実用的なのは、**DoltgreSQL をライブラリ的に利用**する方法である。
 
+> **⚠️ 注意**: DoltgreSQL は2025年4月にBeta品質に到達したばかりであり、API の安定性は保証されていない。Beta ステータスのため、バージョンアップ時に破壊的変更が発生するリスクがある点に留意すること。
+
 ```go
 // 概念的なAPI
 func TestSomething(t *testing.T) {
@@ -64,6 +66,12 @@ psql-wire + pgplex/pgparser + 独自実行エンジン
 
 ---
 
+## PostgreSQL ソースコード参照
+
+https://github.com/postgres/postgres から PostgreSQL 19devel のソースコードを参照可能。詳細は [ソースコード概要](pg-source-overview.md)、[アーキテクチャ詳解](pg-architecture.md)、[インメモリ実装への示唆](pg-source-for-inmem.md) を参照。
+
+---
+
 ## 関連プロジェクトリンク集
 
 | プロジェクト | 用途 | URL |
@@ -79,6 +87,14 @@ psql-wire + pgplex/pgparser + 独自実行エンジン
 | pg_query_go | PGパーサー(CGo) | https://github.com/pganalyze/pg_query_go |
 | ebitengine/purego | CGo不要FFI | https://github.com/ebitengine/purego |
 | wazero | Go製WASMランタイム | https://github.com/tetratelabs/wazero |
+
+---
+
+## 関連ドキュメント
+
+- [PostgreSQL ソースコード概要](pg-source-overview.md) — PostgreSQL 19devel のソースコード構成と主要コンポーネント
+- [PostgreSQL アーキテクチャ詳解](pg-architecture.md) — プロセスモデル、メモリ管理、クエリ処理パイプライン
+- [インメモリ実装への示唆](pg-source-for-inmem.md) — PostgreSQL ソースコードから得られるインメモリ実装のヒント
 
 ---
 

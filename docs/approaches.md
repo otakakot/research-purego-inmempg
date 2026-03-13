@@ -2,6 +2,8 @@
 
 [← README に戻る](../README.md)
 
+> **注**: 本ドキュメント中のPostgreSQLソースコードへの参照は、PostgreSQL 19devel（Copyright © 2026）のソースコード調査に基づいている。ソースコードは https://github.com/postgres/postgres から参照可能。
+
 ---
 
 ## アプローチ一覧
@@ -44,7 +46,7 @@ pgplex/pgparser (SQLパーサー)
 ### 利用する主要ライブラリ
 
 - **ワイヤープロトコル**: [jeroenrinzema/psql-wire](https://github.com/jeroenrinzema/psql-wire)
-- **SQLパーサー**: [pgplex/pgparser](https://github.com/pgplex/pgparser)
+- **SQLパーサー**: [pgplex/pgparser](https://github.com/pgplex/pgparser)（PG 17.7ベース。なおPG 19develの`gram.y`は20,059行、`scan.l`は1,421行、バックエンド全体で約417,000行/32サブディレクトリ）
 - **実行エンジン**: 独自実装
 
 ### 段階的実装プラン（MVP）
@@ -78,6 +80,10 @@ pgplex/pgparser (SQLパーサー)
 
 - クエリ実行エンジンの実装量が膨大
 - PostgreSQLの細かい挙動（暗黙キャスト、NULL処理等）の再現が困難
+  - 暗黙キャスト: `src/backend/parser/parse_coerce.c` に実装されており、型変換ルールが複雑
+  - NULL処理: `src/backend/executor/` 全体（65ファイル）に三値論理が浸透
+  - 型システム: `src/backend/utils/adt/`（119ファイル）に各データ型の演算・変換が実装
+- PostgreSQLのバックエンドコードは `src/backend/` 配下に32サブディレクトリ、約417,000行あり、完全な再現は非現実的
 - 単独開発では現実的な期間での完成が難しい
 
 ---
@@ -135,6 +141,7 @@ func TestSomething(t *testing.T) {
 - Doltのバージョン管理機能との分離が困難な場合がある
 - 依存パッケージが非常に大きくなる（バイナリサイズへの影響）
 - DoltgreSQL のアップストリーム変更への追従コスト
+- DoltgreSQLは特定のPGバージョンを追跡しており、PostgreSQL 19develで追加された新機能・文法はカバーされていない可能性がある
 
 ---
 
